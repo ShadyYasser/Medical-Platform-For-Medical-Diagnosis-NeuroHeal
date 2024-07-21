@@ -1,0 +1,265 @@
+<html>
+  <head>
+    <title>NeuroBot</title>
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+        font-family: Arial, sans-serif;
+      }
+
+      .container {
+        display: flex;
+        flex-direction: row;
+        height: 100vh;
+      }
+
+      .sidebar {
+        background-color: #333;
+        color: #fff;
+        padding: 20px;
+        width: 20%;
+        position: fixed;
+        top: 0;
+        left: -20%;
+        height: 100vh;
+        transition: all 0.3s ease;
+      }
+
+      .sidebar.show {
+        left: 0;
+      }
+
+      .sidebar ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+      }
+
+      .sidebar li {
+        margin-bottom: 10px;
+      }
+
+      .sidebar a {
+        color: #fff;
+        text-decoration: none;
+        font-size: 20px;
+      }
+
+      .sidebar a:hover {
+        color: #ccc;
+      }
+
+      .textbot {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-start;
+        width: auto;
+        background-color: #eee;
+        padding: 20px;
+        font-size: 24px;
+        flex-grow: 2;
+        overflow: hidden;
+      }
+
+      .textbot h1 {
+        margin-top: 0;
+      }
+
+      .textbot input[type="text"] {
+        font-size: 24px;
+        padding: 10px;
+        border: none;
+        border-radius: 5px;
+        margin-bottom: 10px;
+        width: 100%;
+      }
+
+      .textbot input[type="submit"] {
+        background-color: #333;
+        color: #fff;
+        border: none;
+        border-radius: 5px;
+        padding: 10px 20px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      .textbot input[type="submit"]:hover {
+        background-color: #ccc;
+        color: #333;
+      }
+
+      .conversation {
+        overflow-y: auto;
+        max-height: 90%;
+        max-width: 80%;
+      }
+
+      .message {
+        display: flex;
+        flex-direction: column;
+        margin-bottom: 10px;
+      }
+
+      .message-header {
+        font-weight: bold;
+        margin-bottom: 5px;
+      }
+
+      .message-body {
+        background-color: #f5f5f5;
+        padding: 10px;
+        border-radius: 5px;
+      }
+
+      .history {
+        background-color: #f5f5f5;
+        padding: 20px;
+        overflow-y: auto;
+        height: 100vh;
+        flex-basis: 20%;
+      }
+
+      .toggle-button {
+        position: fixed;
+        top: 20px;
+        left: 60px;
+        background-color: #333;
+        color: #fff;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 20px;
+        transition: left 0.3s ease;
+        z-index: 1;
+      }
+
+      .toggle-button.show {
+        left: calc(20% + 60px);
+      }
+
+      .toggle-button:hover {
+        background-color: #fff;
+        color: #333;
+      }
+
+      /* Dropdown Styles Start */
+      .nav-links .dropdown {
+        display: inline-block;
+      }
+
+      .nav-links .dropdown-content {
+        display: none;
+        position: absolute;
+        background-color: #f9f9f9;
+        min-width: 175px;
+        box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+        z-index: 1;
+      }
+
+      .nav-links .dropdown-content a {
+        color: black;
+        padding: 12px 16px;
+        text-decoration: none;
+        display: block;
+        text-align: left;
+      }
+
+      .nav-links .dropdown-content a:hover {
+        background-color: #f1f1f1;
+      }
+
+      .nav-links .dropdown:hover .dropdown-content {
+        display: block;
+      }
+      /* Dropdown Styles End */
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="textbot">
+        <div class="conversation max"></div>
+        <form id="chat-form">
+          <label for="userInput">Type your message:</label>
+          <input type="text" id="userInput" name="userInput" />
+          <input type="submit" value="Send" />
+        </form>
+      </div>
+      <button class="toggle-button">☰</button>
+      <div class="sidebar">
+        <ul>
+          <li><a href="{{ url_for('home_page') }}">Home</a></li>
+          <li class="dropdown">
+            <a href="{{ url_for('models_page') }}" class="dropbtn">Models</a>
+            <div class="dropdown-content">
+              <a href="{{ url_for('mental_health_page') }}">Mental Health</a>
+              <a href="{{ url_for('skin_cancer_page') }}">Skin Cancer</a>
+              <a href="{{ url_for('skin_diseases_page') }}">Skin Diseases</a>
+            </div>
+          </li>
+          <li><a href="{{ url_for('NeuroBot') }}">NeuroBot</a></li>
+          <li><a href="{{ url_for('blog_page') }}">Blog</a></li>
+          <li><a href="{{ url_for('about_page') }}">About</a></li>
+          <li><a href="{{ url_for('contact_page') }}">Contact</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <script>
+      const chatForm = document.getElementById("chat-form");
+      const chatInput = document.getElementById("userInput");
+      const conversation = document.querySelector(".conversation");
+      const toggleButton = document.querySelector(".toggle-button");
+      const sidebar = document.querySelector(".sidebar");
+
+      toggleButton.addEventListener("click", function () {
+        sidebar.classList.toggle("show");
+        toggleButton.classList.toggle("show");
+      });
+
+      chatForm.addEventListener("submit", function (event) {
+        event.preventDefault();
+        const message = chatInput.value;
+        if (!message) return;
+
+        appendMessage("You", message);
+
+        fetch("/chatbot", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ message }),
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            appendMessage("NeuroBot", data.response);
+          })
+          .catch((error) => {
+            console.error(error);
+          });
+      });
+
+      function appendMessage(sender, message) {
+        const messageElement = document.createElement("div");
+        messageElement.classList.add("message");
+        if (sender === "You") {
+          messageElement.innerHTML = `
+                    <div class="message-header">You:</div>
+                    <div class="message-body">${message}</div>
+                `;
+        } else {
+          messageElement.innerHTML = `
+                    <div class="message-header">NeuroBot:</div>
+                    <div class="message-body">${message}</div>
+                `;
+        }
+        conversation.appendChild(messageElement);
+        conversation.scrollTop = conversation.scrollHeight;
+      }
+    </script>
+  </body>
+</html>

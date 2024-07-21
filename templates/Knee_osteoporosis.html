@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css?family=Lato:100,300,400,700,900"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='../static/css/OS.css') }}"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.3/css/fontawesome.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Bree+Serif&display=swap"
+    />
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
+    />
+
+    <link rel="shortcut icon" type="image/png" href="img/Icon/icon.png" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <title>NeuroHeal | Your virtual AI diagnosis doctor</title>
+    <style>
+      /* Dropdown Styles Start */
+      .nav-links .dropdown {
+        display: inline-block;
+      }
+
+      .nav-links .dropdown-content {
+        display: none;
+        position: absolute;
+        background-color: #f9f9f9;
+        min-width: 175px;
+        box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+        z-index: 1;
+      }
+
+      .nav-links .dropdown-content a {
+        color: black;
+        padding: 12px 16px;
+        text-decoration: none;
+        display: block;
+        text-align: left;
+      }
+
+      .nav-links .dropdown-content a:hover {
+        background-color: #f1f1f1;
+      }
+
+      .nav-links .dropdown:hover .dropdown-content {
+        display: block;
+      }
+      /* Dropdown Styles End */
+    </style>
+  </head>
+
+  <body>
+    <header class="header">
+      <nav>
+        <a class="logo" href="{{ url_for('home_page') }}">
+          <img
+            src="{{ url_for('static', filename='../static/logo/New/logo copy.png')}}"
+            alt="Logo"
+          />
+        </a>
+
+        <div class="nav-links" id="navLinks" style="font-family: 'Poppins'">
+          <ul>
+            <li><a href="{{ url_for('home_page') }}">Home</a></li>
+            <li class="dropdown">
+              <a href="{{ url_for('models_page') }}" class="dropbtn">Models</a>
+              <div class="dropdown-content">
+                <a href="{{ url_for('mental_health_page') }}">Mental Health</a>
+                <a href="{{ url_for('skin_cancer_page') }}">Skin Cancer</a>
+                <a href="{{ url_for('skin_diseases_page') }}">Skin Diseases</a>
+              </div>
+            </li>
+            <li><a href="{{ url_for('NeuroBot') }}">NeuroBot</a></li>
+            <li><a href="{{ url_for('blog_page') }}">Blog</a></li>
+            <li><a href="{{ url_for('about_page') }}">About</a></li>
+            <li><a href="{{ url_for('contact_page') }}">Contact</a></li>
+          </ul>
+        </div>
+      </nav>
+
+      <section>
+        <h2>Knee Osteoporosis</h2>
+      </section>
+    </header>
+
+    <main>
+      <section class="Prediction">
+        <form
+          action="{{ url_for('os_predict_page') }}"
+          method="post"
+          enctype="multipart/form-data"
+        >
+          <input
+            class="custom-uploader"
+            type="file"
+            name="image"
+            accept=".jpg, .jpeg, .png"
+          /><br />
+          <button type="submit" class="glow-on-hover">Predict</button>
+        </form>
+
+        {% with messages = get_flashed_messages() %} {% if messages %}
+        <ul class="flashes">
+          {% for message in messages %}
+          <li>{{ message }}</li>
+          {% endfor %}
+        </ul>
+        {% endif %} {% endwith %} {% if chart_data %}
+        <h2>Prediction Result:</h2>
+        <div>{{ chart_data[0]|safe }}</div>
+        <div>{{ chart_data[1]|safe }}</div>
+        {% endif %}
+      </section>
+
+      <footer>
+        <div class="footer-col">
+          <h3>Top Models</h3>
+          <li>
+            <a href="{{ url_for('knee_osteoporosis_page') }}"
+              >Knee Osteoporosis</a
+            >
+          </li>
+        </div>
+
+        <div class="footer-col">
+          <h3>Chatbots</h3>
+          <li><a href="{{ url_for('NeuroBot') }}">NeuroBot</a></li>
+        </div>
+
+        <div class="footer-col">
+          <h3>Our Research papers</h3>
+          <li>
+            <a href="{{ url_for('knee_osteoporosis_page') }}"
+              >Knee Osteoporosis</a
+            >
+          </li>
+        </div>
+
+        <div class="footer-col">
+          <h3>More</h3>
+          <li><a href="{{ url_for('blog_page') }}">Blog</a></li>
+          <li><a href="{{ url_for('about_page') }}">About US</a></li>
+          <li><a href="{{ url_for('contact_page') }}">Contact</a></li>
+        </div>
+
+        <div class="footer-col">
+          <h3>Download our APP</h3>
+          <li><a href="{{ url_for('coming_soon_page') }}">Windows</a></li>
+          <li><a href="{{ url_for('coming_soon_page') }}">Linux</a></li>
+          <li><a href="{{ url_for('coming_soon_page') }}">Mac</a></li>
+          <li><a href="{{ url_for('coming_soon_page') }}">Android</a></li>
+          <li><a href="{{ url_for('coming_soon_page') }}">IOS</a></li>
+        </div>
+
+        <div class="copyright">
+          <p>Copyright @2024 All rights reserved</p>
+          <div class="pro-links">
+            <i class="fab fa-facebook"></i>
+            <i class="fab fa-instagram"></i>
+            <i class="fab fa-linkedin-in"></i>
+          </div>
+        </div>
+      </footer>
+    </main>
+  </body>
+</html>
